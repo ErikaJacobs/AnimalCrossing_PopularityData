@@ -28,8 +28,6 @@ from bs4 import BeautifulSoup
 soup = BeautifulSoup(page_source, 'lxml')
 villagers = []
 
-print(soup)
-
 #%%
 tier_data = soup.find_all(class_="c-tier")
 tier_list = list(tier_data)
@@ -59,8 +57,33 @@ for i in tier_list:
         if villager_data[-1] == i:
             soup = BeautifulSoup(page_source, 'lxml')
 #%%
-        
-# Create df
+
+# Create Pandas Dataframe
+            
+import pandas as pd
+
+df = pd.DataFrame({
+    'villager_name': villager_name,
+    'villager_tier_rank': villager_rank,
+    'villager_tier': villager_tier,
+    'villager_value': villager_value})
+
+# Clean Up
+
+tier_dict = {'TIER 1': 1, 
+             'TIER 2': 2, 
+             'TIER 3': 3, 
+             'TIER 4': 4, 
+             'TIER 5': 5, 
+             'TIER 6': 6}
+
+df['villager_tier_num'] = df['villager_tier'].apply(lambda x: tier_dict[x])
+
+df.sort_values(by=['villager_tier_num', 'villager_tier_rank'])
+
+df['villager_rank'] = df.index+1
+
+df.head(10)
             
  #%%
             
