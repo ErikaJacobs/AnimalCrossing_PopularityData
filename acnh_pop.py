@@ -120,7 +120,7 @@ df_kag = pd.read_csv(csv_after)
 
 # Join Kaggle and Popularity together
 
-df = pd.merge(df, df_kag, how='left', left_on=['villager_name'], right_on=['Name'])
+df_final = pd.merge(df, df_kag, how='left', left_on=['villager_name'], right_on=['Name'])
                   
 # Connect to MySQL
             
