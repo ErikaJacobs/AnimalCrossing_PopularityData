@@ -88,8 +88,40 @@ df.head(10)
  #%%
             
 # Get Table from Kaggle
-            
-            
+
+import kaggle
+import os
+import zipfile
+import pandas as pd
+
+# Download From Kaggle
+kaggle.api.authenticate()
+kaggle.api.dataset_download_files('jessicali9530/animal-crossing-new-horizons-nookplaza-dataset', path='C:/Users/cluel/Downloads')
+
+# Unzip Download
+
+path_before = 'C:/Users/cluel/Downloads/animal-crossing-new-horizons-nookplaza-dataset.zip'
+path_after = 'C:/Users/cluel/Downloads/animal-crossing-new-horizons-nookplaza-dataset'
+
+with zipfile.ZipFile(path_before, 'r') as zip_ref:
+    zip_ref.extractall(path_after)
+
+# Move villagers.csv to project directory
+csv_before = 'C:/Users/cluel/Downloads/animal-crossing-new-horizons-nookplaza-dataset/villagers.csv'
+csv_after = 'C:/Users/cluel/Documents/GitHub/Animal-Crossing-Popularity-Data/villagers.csv'
+
+os.rename(csv_before, csv_after)
+
+# Import Kaggle Data to Python
+
+df_kag = pd.read_csv(csv_after)
+
+#%%
+
+# Join Kaggle and Popularity together
+
+df = pd.merge(df, df_kag, how='left', left_on=['villager_name'], right_on=['Name'])
+                  
 # Connect to MySQL
             
 
