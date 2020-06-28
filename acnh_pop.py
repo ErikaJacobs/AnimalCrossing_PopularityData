@@ -110,7 +110,10 @@ with zipfile.ZipFile(path_before, 'r') as zip_ref:
 csv_before = 'C:/Users/cluel/Downloads/animal-crossing-new-horizons-nookplaza-dataset/villagers.csv'
 csv_after = 'C:/Users/cluel/Documents/GitHub/Animal-Crossing-Popularity-Data/villagers.csv'
 
-os.rename(csv_before, csv_after)
+try:
+    os.rename(csv_before, csv_after)
+except:
+    print('ERROR: File already downloaded')
 
 # Import Kaggle Data to Python
 
