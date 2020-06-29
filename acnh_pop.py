@@ -61,7 +61,7 @@ for i in tier_list:
 # Create Pandas Dataframe
             
 import pandas as pd
-from datetime import date
+import datetime
 
 df = pd.DataFrame({
     'villager_name': villager_name,
@@ -162,12 +162,24 @@ def birthday_clean(x):
 
 df_final['Birthday'] = df_final['Birthday'].apply(lambda x: birthday_clean(x))
 
+# Clean Column Names - No Spaces
+
+for column in list(df_final.columns):
+    old = column
+    new = column.replace(' ', '_')
+    
+    if old == new:
+        continue
+    else:
+        df_final.rename(columns={old:new}, inplace=True)
+    
 #%%
+    
+# Queries
 
-df_col = list(df_final.columns)
-print(df_col)
-
-df_dict = {
+# Set-Up Query 1
+    
+column_attributes = {
     'villager_name': 'varchar(50)',
     'villager_tier_rank': 'int',
     'villager_tier': 'varchar(50)',
@@ -182,17 +194,55 @@ df_dict = {
     'Hobby': 'varchar(50)',
     'Birthday': 'datetime',
     'Catchphrase': 'varchar(50)',
-    'Favorite Song': 'varchar(50)',
-    'Style 1': 'varchar(50)',
-    'Style 2': 'varchar(50)',
-    'Color 1': 'varchar(50)',
-    'Color 2': 'varchar(50)',
+    'Favorite_Song': 'varchar(50)',
+    'Style_1': 'varchar(50)',
+    'Style_2': 'varchar(50)',
+    'Color_1': 'varchar(50)',
+    'Color_2': 'varchar(50)',
     'Wallpaper':'varchar(50)',
     'Flooring':'varchar(50)',
-    'Furniture List': 'varchar(50)',
+    'Furniture_List': 'varchar(50)',
     'Filename': 'varchar(50)',
-    'Unique Entry ID':'varchar(50)
+    'Unique_Entry_ID':'varchar(50)'
     }
+
+statement_details = []
+
+for column in list(df_final.columns):
+
+    string = f'"{column}" {column_attributes[column]}'
+    statement_details.append(string)
+    
+statement = ', '.join(statement_details)
+
+
+query1 = f"""CREATE TABLE IF NOT EXISTS 'acnh_villagers' ({statement})"""
+
+# Query 2
+     
+
+#%%
+
+# Connect to SQL (THIS WAY)
+
+import mysql.connector
+from sqlalchemy import create_engine
+
+#conn_configs = {
+#    host
+#    database
+#    user
+#    password
+#    port}
+
+#conn = mysql.connector.connect(host='localhost',
+#                                         database='erika_python',
+#                                         user='root',
+#                                         password='password')
+
+conn = create_engine('mysql+mysqlconnector://root:password@localhost:3306/erika_python', echo=False)
+df_final.to_sql(name='acnh_villagers', con = conn, if_exists = 'append', index=False)
+
 #%%
 
 # Connect to MySQL
@@ -207,16 +257,7 @@ try:
     cur = conn.cursor()
     
 except:
-    print("YOU SUCK AND THIS DIDN'T WORK")
-    
-
-query1 = """CREATE TABLE IF NOT EXISTS 'acnh_villagers' (
-    `col` VARCHAR(16) NOT NULL""")
-
-query2 = """
-     
-
-#%%
+    print("YOU SUCK AND THIS DIDN'T WORK")#%%
 
 # Close connections
    
