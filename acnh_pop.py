@@ -61,6 +61,7 @@ for i in tier_list:
 # Create Pandas Dataframe
             
 import pandas as pd
+from datetime import date
 
 df = pd.DataFrame({
     'villager_name': villager_name,
@@ -83,7 +84,27 @@ df.sort_values(by=['villager_tier_num', 'villager_tier_rank'])
 
 df['villager_rank'] = df.index+1
 
-df.head(10)
+df['Date_Pulled'] = datetime.date.today()
+
+# Name Changes for Join
+
+def name_change(x):
+    
+    name_dict = {
+    'Renee': 'Renée',
+    'OHare': "O'Hare",
+    'Buck(Brows)': 'Buck',
+    'WartJr': 'Wart Jr.',
+    'Crackle(Spork)': 'Spork'}
+    
+    if x in list(name_dict.keys()):
+        name = name_dict[x]
+    else:
+        name = x
+    return name
+
+df['villager_name'] = df['villager_name'].apply(lambda x: name_change(x))
+
             
  #%%
             
@@ -124,12 +145,86 @@ df_kag = pd.read_csv(csv_after)
 # Join Kaggle and Popularity together
 
 df_final = pd.merge(df, df_kag, how='left', left_on=['villager_name'], right_on=['Name'])
-                  
-# Connect to MySQL
-            
 
-# Upload Both Tables, Join together
-        
+# Clean Birthday field
+
+def birthday_clean(x):
+    from datetime import datetime
+    
+    x = str(x)
+    try:
+        datetime_object = datetime.strptime(x, '%d-%b')
+        datetime_object = datetime_object.replace(year = 2020)
+    except:
+        datetime_object = 'N/A'
+    
+    return datetime_object
+
+df_final['Birthday'] = df_final['Birthday'].apply(lambda x: birthday_clean(x))
+
+#%%
+
+df_col = list(df_final.columns)
+print(df_col)
+
+df_dict = {
+    'villager_name': 'varchar(50)',
+    'villager_tier_rank': 'int',
+    'villager_tier': 'varchar(50)',
+    'villager_value': 'varchar(50)',
+    'villager_tier_num': 'int',
+    'villager_rank': 'int',
+    'Date_Pulled': 'datetime',
+    'Name': 'varchar(50)',
+    'Species': 'varchar(50)',
+    'Gender': 'varchar(50)',
+    'Personality': 'varchar(50)',
+    'Hobby': 'varchar(50)',
+    'Birthday': 'datetime',
+    'Catchphrase': 'varchar(50)',
+    'Favorite Song': 'varchar(50)',
+    'Style 1': 'varchar(50)',
+    'Style 2': 'varchar(50)',
+    'Color 1': 'varchar(50)',
+    'Color 2': 'varchar(50)',
+    'Wallpaper':'varchar(50)',
+    'Flooring':'varchar(50)',
+    'Furniture List': 'varchar(50)',
+    'Filename': 'varchar(50)',
+    'Unique Entry ID':'varchar(50)
+    }
+#%%
+
+# Connect to MySQL
+
+import mysql.connector
+
+try:
+    conn = mysql.connector.connect(host='localhost',
+                                         database='erika_python',
+                                         user='root',
+                                         password='password')
+    cur = conn.cursor()
+    
+except:
+    print("YOU SUCK AND THIS DIDN'T WORK")
+    
+
+query1 = """CREATE TABLE IF NOT EXISTS 'acnh_villagers' (
+    `col` VARCHAR(16) NOT NULL""")
+
+query2 = """
+     
+
+#%%
+
+# Close connections
+   
+cur.close()
+conn.close()       
+        #%%
+
+# Upload Both Tables        
         
 
 # https://medium.com/ymedialabs-innovation/web-scraping-using-beautiful-soup-and-selenium-for-dynamic-page-2f8ad15efe25
