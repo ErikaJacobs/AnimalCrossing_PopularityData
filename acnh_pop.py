@@ -7,7 +7,7 @@ options = webdriver.ChromeOptions()
 options.add_argument('--ignore-certificate-errors')
 options.add_argument('--incognito')
 options.add_argument('--headless')
-driver = webdriver.Chrome("C://Users/cluel/Documents/GitHub/Animal-Crossing-Popularity-Data/chromedriver.exe", chrome_options=options)
+driver = webdriver.Chrome("/mnt/c/Users/cluel/Documents/GitHub/Animal-Crossing-Popularity-Data/chromedriver.exe", chrome_options=options)
 
 import time
 
@@ -121,15 +121,15 @@ kaggle.api.dataset_download_files('jessicali9530/animal-crossing-new-horizons-no
 
 # Unzip Download
 
-path_before = 'C:/Users/cluel/Downloads/animal-crossing-new-horizons-nookplaza-dataset.zip'
-path_after = 'C:/Users/cluel/Downloads/animal-crossing-new-horizons-nookplaza-dataset'
+path_before = '/mnt/c/Users/cluel/Downloads/animal-crossing-new-horizons-nookplaza-dataset.zip'
+path_after = '/mnt/c/Users/cluel/Downloads/animal-crossing-new-horizons-nookplaza-dataset'
 
 with zipfile.ZipFile(path_before, 'r') as zip_ref:
     zip_ref.extractall(path_after)
 
 # Move villagers.csv to project directory
-csv_before = 'C:/Users/cluel/Downloads/animal-crossing-new-horizons-nookplaza-dataset/villagers.csv'
-csv_after = 'C:/Users/cluel/Documents/GitHub/Animal-Crossing-Popularity-Data/villagers.csv'
+csv_before = '/mnt/c/Users/cluel/Downloads/animal-crossing-new-horizons-nookplaza-dataset/villagers.csv'
+csv_after = '/mnt/c/Users/cluel/Documents/GitHub/Animal-Crossing-Popularity-Data/villagers.csv'
 
 try:
     os.rename(csv_before, csv_after)
@@ -228,19 +228,24 @@ query1 = f"""CREATE TABLE IF NOT EXISTS 'acnh_villagers' ({statement})"""
 import mysql.connector
 from sqlalchemy import create_engine
 
-#conn_configs = {
-#    host
-#    database
-#    user
-#    password
-#    port}
+conn_configs = {
+    'host': '127.0.0.1',
+    'database': 'erika_python',
+    'user': 'root',
+    'password': 'password',
+    'port': '3306',
+    'auth_plugin': 'mysql_native_password'
+ }
 
-#conn = mysql.connector.connect(host='localhost',
-#                                         database='erika_python',
-#                                         user='root',
-#                                         password='password')
+#conn = mysql.connector.connect(auth_plugin='mysql_native_password',
+                                        #host='127.0.0.1',
+                                        # database='erika_python',
+                                        # user='root',
+                                        # password='password',
+                                        # port='3306',
+# )
 
-conn = create_engine('mysql+mysqlconnector://root:password@localhost:3306/erika_python', echo=False)
+conn = create_engine('mysql+mysqlconnector://root:password@127.0.0.1:3306/erika_python', echo=False)
 df_final.to_sql(name='acnh_villagers', con = conn, if_exists = 'append', index=False)
 
 #%%
@@ -269,3 +274,5 @@ conn.close()
         
 
 # https://medium.com/ymedialabs-innovation/web-scraping-using-beautiful-soup-and-selenium-for-dynamic-page-2f8ad15efe25
+# https://code.visualstudio.com/docs/remote/wsl
+# https://medium.com/@ryanroline/installing-apache-airflow-on-windows-10-5247aa1249ef
