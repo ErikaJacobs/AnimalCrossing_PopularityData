@@ -1,7 +1,7 @@
 
 #%%
 class acnh_pop_class:
-    def acnGetPopData(self):
+    def acnGetPopData(self, **kwargs):
         from selenium import webdriver
 
         options = webdriver.ChromeOptions()
@@ -22,10 +22,21 @@ class acnh_pop_class:
                 time.sleep(2)
                 
         page_source = driver.page_source
+
+        task_instance = kwargs['task_instance']
+        page_source = task_instance.xcom_push(key="page_source", value=page_source)
+
         return page_source
 
+
     #%%
-    def getVillagerInfo(self, page_source):
+    def getVillagerInfo(self, **kwargs):
+
+        import sys
+        sys.setrecursionlimit(10000)
+
+        task_instance = kwargs['task_instance']
+        page_source = task_instance.xcom_pull(task_ids='scrape_web_data', key='page_source')
 
         from bs4 import BeautifulSoup
 
@@ -65,13 +76,11 @@ class acnh_pop_class:
         'villager_tier': villager_tier,
         'villager_value': villager_value}
 
-        return villager_field_dict
-    #%%
+        #task_instance = kwargs['task_instance']
+        #villager_field_dict = task_instance.xcom_push(key="villager_field_dict", value=villager_field_dict)
 
-    # Create Pandas Dataframe
+        # Create df
 
-    def acnhpop_df(self, villager_field_dict):
-                
         import pandas as pd
         import datetime
 
@@ -112,12 +121,6 @@ class acnh_pop_class:
             return name
 
         df['villager_name'] = df['villager_name'].apply(lambda x: name_change(x))
-
-        return df
-    
-    #%%
-
-    def kaggle_data(self):
             
         # Get Table from Kaggle
 
@@ -151,15 +154,8 @@ class acnh_pop_class:
 
         df_kag = pd.read_csv(csv_after)
 
-        return df_kag
-
-    #%%
-
-    # Join Kaggle and Popularity together
-
-    def joinTables(self, df, df_kag):
-
-        import pandas as pd
+        def push_function():
+            return df_kag
 
         df_final = pd.merge(df, df_kag, how='left', left_on=['villager_name'], right_on=['Name'])
 
@@ -191,12 +187,6 @@ class acnh_pop_class:
                 continue
             else:
                 df_final.rename(columns={old:new}, inplace=True)
-        
-        return df_final
-            
-    #%%
-        
-    def mysql(self, df_final):
 
         import datetime
 
@@ -260,19 +250,6 @@ class acnh_pop_class:
         #cur.close()     
 
     #%%
-
-#%%
-# Procedure
-
-#from datetime import datetime
-#NOW = datetime.now()
-
-#page_source = acnGetPopData()
-#villager_field_dict = getVillagerInfo(page_source)
-#df = acnhpop_df(villager_field_dict)
-#df_kag = kaggle_data()
-#df_final = joinTables(df, df_kag)
-#mysql(df_final)
 
 #%%
 # Sources     
