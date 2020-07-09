@@ -254,12 +254,4 @@ class acnh_pop_class:
         df_final.to_sql(name='acnh_villagers', con = conn, if_exists = 'append', index=False)
 
         # Close connection
-        #cur.close()     
-
-    #%%
-
-#%%
-# Sources     
-# https://medium.com/ymedialabs-innovation/web-scraping-using-beautiful-soup-and-selenium-for-dynamic-page-2f8ad15efe25
-# https://code.visualstudio.com/docs/remote/wsl
-# https://medium.com/@ryanroline/installing-apache-airflow-on-windows-10-5247aa1249ef
+        #cur.close()
