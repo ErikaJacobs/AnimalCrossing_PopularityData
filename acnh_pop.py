@@ -145,10 +145,17 @@ class acnh_pop_class:
         csv_before = '/mnt/c/Users/cluel/Downloads/animal-crossing-new-horizons-nookplaza-dataset/villagers.csv'
         csv_after = '/mnt/c/Users/cluel/Documents/GitHub/Animal-Crossing-Popularity-Data/villagers.csv'
 
-        try:
-            os.rename(csv_before, csv_after)
-        except:
-            print('ERROR: File already downloaded')
+        import glob
+        acdir = glob.glob('/mnt/c/Users/cluel/Documents/GitHub/Animal-Crossing-Popularity-Data/*')
+
+        if csv_after in acdir:
+            print('NOTE: File already downloaded')
+        else:
+            try:
+                os.rename(csv_before, csv_after)
+                print('File downloaded')
+            except:
+                print('ERROR: File from Kaggle not downloaded')
 
         # Import Kaggle Data to Python
 
