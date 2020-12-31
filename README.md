@@ -20,7 +20,7 @@ This project automatically updates a MySQL database of villager data from the vi
 * sqlalchemy
 * mysql-connector-python
 
-# Featured Notebooks, Scripts, Analysis, or Deliverables
+# Featured Scripts or Deliverables
 * [```acnh_pop.py```](https://github.com/ErikaJacobs/Animal-Crossing-Popularity-Data/blob/master/acnh_pop.py)
 
 # Other Repository Contents
