@@ -14,7 +14,7 @@ import configparser
 
 class AC_Pop:
     
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         self.path = os.path.dirname(os.path.realpath(__file__))
         #self.path = 'C:/Users/cluel/Documents/GitHub/Animal-Crossing-Popularity-Data'
         self.configs = {}
@@ -25,13 +25,14 @@ class AC_Pop:
         for config in config_list:
             self.configs[config] = Config.get('MySQL', config)
 
-    def getPopData(self):
+    def create_df(self, *args, **kwargs):
+        path = self.path
         options = webdriver.ChromeOptions()
         options.add_argument('--ignore-certificate-errors')
         options.add_argument('--incognito')
         options.add_argument('--headless')
         options.add_experimental_option('excludeSwitches', ['enable-logging'])
-        driver = webdriver.Chrome(self.path + "/chromedriver.exe", options=options)
+        driver = webdriver.Chrome(path + "/chromedriver.exe", options=options)
 
         url = 'https://www.animalcrossingportal.com/games/new-horizons/guides/villager-popularity-list.php'
         driver.get(url)
@@ -42,11 +43,7 @@ class AC_Pop:
                 driver.execute_script("arguments[0].click();", classes[x])
                 time.sleep(2)
                 
-        self.page_source = driver.page_source
-
-    def getVillagerInfo(self, **kwargs):
-        
-        page_source = self.page_source
+        page_source = driver.page_source
 
         soup = BeautifulSoup(page_source, 'lxml')
 
@@ -77,16 +74,14 @@ class AC_Pop:
                 if villager_data[-1] == i:
                     soup = BeautifulSoup(page_source, 'lxml')
             
-        self.villager_field_dict = {
+        villager_field_dict = {
         'villager_name': villager_name,
         'villager_tier_rank': villager_rank,
         'villager_tier': villager_tier,
         'villager_value': villager_value}
         
-    def create_df(self):
         # Create df
-        self.df = pd.DataFrame(self.villager_field_dict)
-        df = self.df
+        df = pd.DataFrame(villager_field_dict)
 
         # Clean Up
         tier_dict = {'TIER 1': 1, 
@@ -119,8 +114,10 @@ class AC_Pop:
 
         df['villager_name'] = df['villager_name'].apply(lambda x: name_change(x))
         
+        # Write to CSV
+        df.to_csv(path + '/df.csv')
         
-    def kaggle_data(self):
+    def kaggle_data(self, *args, **kwargs):
         
         path = self.path
         
@@ -149,45 +146,48 @@ class AC_Pop:
             os.remove(path_before)
             rmtree(path_after)
         
-        # Import Kaggle Data to Python
-        self.df_kag = pd.read_csv(path + '/villagers.csv')
-        
-    def join_tables(self):
-           self.df_final = pd.merge(self.df, self.df_kag, how='left', left_on=['villager_name'], right_on=['Name'])
-           df_final = self.df_final
-    
-           # Clean Birthday field
-    
-           def birthday_clean(x):
-    
-               
-               x = str(x)
-               try:
-                   bdate = dt.strptime(x, '%d-%b')
-                   bdate = bdate.replace(year = 2020)
-                   bdate = bdate.date()
-               except:
-                   bdate = 'N/A'
-               
-               return bdate
-    
-           df_final['Birthday'] = df_final['Birthday'].apply(lambda x: birthday_clean(x))
-    
-           # Clean Column Names - No Spaces
-    
-           for column in list(df_final.columns):
-               old = column
-               new = column.replace(' ', '_')
-               
-               if old == new:
-                   continue
-               else:
+    def join_tables(self, *args, **kwargs):
+
+            path = self.path
+            
+            # Import Dataframes to Python and Merge
+            df_kag = pd.read_csv(path + '/villagers.csv')
+            df = pd.read_csv(path + '/df.csv')
+            df_final = pd.merge(df, df_kag, how='left', left_on=['villager_name'], right_on=['Name'])
+            
+            # Clean Birthday field
+         
+            def birthday_clean(x):
+                x = str(x)
+                try:
+                    bdate = dt.strptime(x, '%d-%b')
+                    bdate = bdate.replace(year = 2020)
+                    bdate = bdate.date()
+                except:
+                    bdate = 'N/A'
+                
+                return bdate
+         
+            df_final['Birthday'] = df_final['Birthday'].apply(lambda x: birthday_clean(x))
+         
+            # Clean Column Names - No Spaces
+         
+            for column in list(df_final.columns):
+                old = column
+                new = column.replace(' ', '_')
+                
+                if old == new:
+                    continue
+                else:
                    df_final.rename(columns={old:new}, inplace=True)
+            
+            # Write to CSV
+            df_final.to_csv(path + '/df_final.csv')
                    
-                   
-                   
-    def send_mysql(self):
-        df_final = self.df_final
+    def send_mysql(self, *args, **kwargs):
+        # Import Dataframe and Configs
+        path = self.path
+        df_final = pd.read_csv(path + '/df_final.csv')
         configs = self.configs
         
         # Set-Up Query for Create Table (If Not Exists)
@@ -248,3 +248,9 @@ class AC_Pop:
 
         # Close connection
         cur.close()
+        
+    def cleanup(self, *args, **kwargs):
+        path = self.path
+        os.remove(path + '/df_final.csv')
+        os.remove(path + '/df.csv')
+        
