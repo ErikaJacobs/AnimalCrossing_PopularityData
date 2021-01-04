@@ -38,8 +38,8 @@ Python ac_pop.py
 * [```ACNH_tier_rank_queries.sql```](ACNH_tier_rank_queries.sql) - Example queries for villager analysis
 * [```chromedriver.exe```](chromedriver.exe) - Chrome Driver used to Operate JavaScript on website before scraping 
 * [```config.ini```](config.ini) -  Configurations for MySQL connection
-* ['''requirements.txt'''](requirements.txt) - Python package requirements
-[```villagers.csv```](villagers.csv) - Kaggle dataset of *Animal Crossing* villager data
+* [```requirements.txt```](requirements.txt) - Python package requirements
+* [```villagers.csv```](villagers.csv) - Kaggle dataset of *Animal Crossing* villager data
 
 # Sources
 * [Animal Crossing Portal - Popularity Tier List](https://www.animalcrossingportal.com/games/new-horizons/guides/villager-popularity-list.php#/)
