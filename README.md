@@ -18,6 +18,19 @@ This project automatically updates a MySQL database of villager data from the vi
 * sqlalchemy
 * mysql-connector-python
 
+## How To Run
+On the command line of your operating system, navigate to the repository directory (ideally using a Python virtual environment).
+
+Run the following code on the command line to install requirements:
+```
+pip install -r requirements.txt 
+```
+
+Run the following code on the command line to run this project:
+```
+Python ac_pop.py
+```
+
 # Featured Scripts or Deliverables
 * [```acnh_pop.py```](acnh_pop.py)
 
