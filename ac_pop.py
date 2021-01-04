@@ -16,7 +16,6 @@ class AC_Pop:
     
     def __init__(self, *args, **kwargs):
         self.path = os.path.dirname(os.path.realpath(__file__))
-        #self.path = 'C:/Users/cluel/Documents/GitHub/Animal-Crossing-Popularity-Data'
         self.configs = {}
         Config = configparser.ConfigParser()
         Config.read(self.path+"/config.ini")
@@ -81,7 +80,8 @@ class AC_Pop:
         'villager_value': villager_value}
         
         # Create df
-        df = pd.DataFrame(villager_field_dict)
+        self.df = pd.DataFrame(villager_field_dict)
+        df = self.df
 
         # Clean Up
         tier_dict = {'TIER 1': 1, 
@@ -113,9 +113,6 @@ class AC_Pop:
             return name
 
         df['villager_name'] = df['villager_name'].apply(lambda x: name_change(x))
-        
-        # Write to CSV
-        df.to_csv(path + '/df.csv')
         
     def kaggle_data(self, *args, **kwargs):
         
@@ -151,9 +148,9 @@ class AC_Pop:
             path = self.path
             
             # Import Dataframes to Python and Merge
-            df_kag = pd.read_csv(path + '/villagers.csv')
-            df = pd.read_csv(path + '/df.csv')
-            df_final = pd.merge(df, df_kag, how='left', left_on=['villager_name'], right_on=['Name'])
+            self.df_kag = pd.read_csv(path + '/villagers.csv')
+            self.df_final = pd.merge(self.df, self.df_kag, how='left', left_on=['villager_name'], right_on=['Name'])
+            df_final = self.df_final
             
             # Clean Birthday field
          
@@ -181,13 +178,10 @@ class AC_Pop:
                 else:
                    df_final.rename(columns={old:new}, inplace=True)
             
-            # Write to CSV
-            df_final.to_csv(path + '/df_final.csv')
-                   
+
     def send_mysql(self, *args, **kwargs):
         # Import Dataframe and Configs
-        path = self.path
-        df_final = pd.read_csv(path + '/df_final.csv')
+        df_final = self.df_final
         configs = self.configs
         
         # Set-Up Query for Create Table (If Not Exists)
@@ -249,8 +243,13 @@ class AC_Pop:
         # Close connection
         cur.close()
         
-    def cleanup(self, *args, **kwargs):
-        path = self.path
-        os.remove(path + '/df_final.csv')
-        os.remove(path + '/df.csv')
-        
+#%%
+
+# Procedure
+print(f'Villager data collection started at {datetime.datetime.now()}')
+ac = AC_Pop()
+ac.create_df()
+ac.kaggle_data()
+ac.join_tables()
+ac.send_mysql()
+print(f'Villager data collection completed at {datetime.datetime.now()}')
