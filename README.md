@@ -8,7 +8,6 @@ This project automatically updates a MySQL database of villager data from the vi
 
 ## Technologies Used
 * Python
-* Airflow
 * Linux (WSL)
 
 ## Packages Used
