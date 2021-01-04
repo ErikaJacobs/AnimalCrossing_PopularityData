@@ -20,10 +20,9 @@ This project automatically updates a MySQL database of villager data from the vi
 * mysql-connector-python
 
 # Featured Scripts or Deliverables
-* [```acnh_pop.py```](https://github.com/ErikaJacobs/Animal-Crossing-Popularity-Data/blob/master/acnh_pop.py)
+* [```acnh_pop.py```](acnh_pop.py)
 
 # Other Repository Contents
-* [```acnh_dag.py```](https://github.com/ErikaJacobs/Animal-Crossing-Popularity-Data/blob/master/acnh_dag.py) - Airflow DAG that processes acnh_pop.py functions every two weeks
 * [```chromedriver.exe```](https://github.com/ErikaJacobs/Animal-Crossing-Popularity-Data/blob/master/chromedriver.exe) - Chrome Driver used to Operate JavaScript on website before scraping 
 * [```villagers.csv```](https://github.com/ErikaJacobs/Animal-Crossing-Popularity-Data/blob/master/villagers.csv) - Kaggle dataset of *Animal Crossing* villager data
 
