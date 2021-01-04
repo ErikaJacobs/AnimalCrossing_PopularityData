@@ -87,5 +87,5 @@ GROUP BY Tier, Gender;
 /* My Villagers and Ranks*/
 SELECT villager_name, villager_rank, villager_tier_num
 FROM acnh_villagers
-WHERE villager_name in ('Broccolo', 'Zucker', 'Aurora', 'Nibbles', 'Reneigh', 'Octavian', 'Marshal', 'Kidd', 'Diana');
+WHERE villager_name in ('Broccolo', 'Zucker', 'Aurora', 'Nibbles', 'Reneigh', 'Octavian', 'Marshal', 'Cherry', 'Diana');
 ORDER BY villager_rank;

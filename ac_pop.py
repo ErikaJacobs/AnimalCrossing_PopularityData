@@ -32,7 +32,7 @@ class AC_Pop:
         options.add_argument('--incognito')
         options.add_argument('--headless')
         options.add_experimental_option('excludeSwitches', ['enable-logging'])
-        driver = webdriver.Chrome(path + "/chromedriver.exe", options=options)
+        driver = webdriver.Chrome(executable_path = rf'{path}{"/chromedriver.exe"}', options=options)
 
         url = 'https://www.animalcrossingportal.com/games/new-horizons/guides/villager-popularity-list.php'
         driver.get(url)
